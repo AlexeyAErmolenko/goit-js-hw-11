@@ -20,35 +20,39 @@ import {
 
 let searchQuery = '';
 function onInput(event) {
-  // showLoader();
-  searchQuery = event.target.value;
-  !searchQuery.trim()
-    ? button.setAttribute('disabled', ' ')
-    : button.removeAttribute('disabled');
+  return (searchQuery = event.target.value);
 }
 input.addEventListener('input', onInput);
 
 function onFormSubmit(event) {
-  showLoader();
+  clearGallery();
   event.preventDefault();
+  if (!searchQuery.trim()) {
+    hideLoader();
+    return;
+  }
+  showLoader();
+  button.setAttribute('disabled', ' ');
   const axiosImagesData = getImagesByQuery(searchQuery)
     .then(imagesData => {
       if (!imagesData.length) {
         OnAxiosError();
       }
-      clearGallery();
       createGallery(imagesData);
+      hideLoader();
     })
-    .catch(error =>
+    .catch(error => {
       iziToast.error({
         title: 'Error',
-        message: `❌ Rejected ` + error,
+        message: `❌` + error,
         position: 'topRight',
-      })
-    )
+        maxWidth: 350,
+      });
+      hideLoader();
+    })
     .finally(() => {
       form.reset();
-      hideLoader();
+      button.removeAttribute('disabled');
     });
 }
 form.addEventListener('submit', onFormSubmit);
@@ -56,8 +60,9 @@ form.addEventListener('submit', onFormSubmit);
 function OnAxiosError() {
   iziToast.error({
     message:
-      `❌ ` +
-      `Sorry, there are no images matching your search query. Please try again!`,
+      `Sorry, there are no images matching ` +
+      `your search query. Please try again!`,
     position: 'topRight',
+    maxWidth: 350,
   });
 }
