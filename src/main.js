@@ -2,7 +2,6 @@ import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
 const refs = {
-  /*[name="searchText"] прибрать? */
   input: document.querySelector('input'),
   button: document.querySelector('button'),
   form: document.querySelector('.form'),
